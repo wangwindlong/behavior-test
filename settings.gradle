@@ -1,0 +1,2 @@
+rootProject.name='behavior'
+include ':app'
