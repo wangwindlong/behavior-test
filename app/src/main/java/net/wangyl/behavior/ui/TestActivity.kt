@@ -1,5 +1,6 @@
 package net.wangyl.behavior.ui
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,12 +14,14 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import kotlinx.android.synthetic.main.activity_test.*
 import net.wangyl.behavior.behaviors.MainHeaderBehavior
 import net.wangyl.behavior.behaviors.MainHeaderBehavior.OnHeaderStateListener
 import net.wangyl.behavior.R
 import net.wangyl.behavior.ui.fragment.TextFragment
 import net.wangyl.behavior.ui.fragment.TypeFragment
 import net.wangyl.behavior.adapter.TypePageAdapter
+import net.wangyl.behavior.ui.fragment.CalendarFragment
 import java.util.*
 import kotlin.math.abs
 
@@ -52,7 +55,7 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
         val fragments = ArrayList<Fragment>()
         val titles = ArrayList<String>()
         fragments.add(TypeFragment.newInstance())
-        fragments.add(TypeFragment.newInstance())
+        fragments.add(CalendarFragment.newInstance())
         fragments.add(TypeFragment.newInstance())
         titles.add("tab1")
         titles.add("tab2")
@@ -76,6 +79,9 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
         initBackgroundVP()
+        top_button.setOnClickListener {
+            startActivity(Intent(this@TestActivity, TestTouchActivity::class.java))
+        }
     }
 
     fun initBackgroundVP() {
@@ -113,10 +119,10 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
                 mLastY = y ?: 0
             }
             MotionEvent.ACTION_MOVE -> {
-                mBackgroundPager?.isUserInputEnabled = false
+//                mBackgroundPager?.isUserInputEnabled = false
                 if (abs(x - mLastX) > abs(y - mLastY) + 50) {
                     Log.e("TestActivity", "horizontal")
-                    mBackgroundPager?.isUserInputEnabled = true
+//                    mBackgroundPager?.isUserInputEnabled = true
                 } else  {
                     Log.e("TestActivity", "vertical")
                 }

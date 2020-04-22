@@ -25,6 +25,9 @@
         <activity
             android:name=".ui.ScrollingActivity"
             android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".ui.TestTouchActivity"
+            android:screenOrientation="fullSensor" />
     </application>
 
 </manifest>

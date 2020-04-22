@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <net.wangyl.behavior.ui.widget.GrandView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/curve_line_color_green"
+        >
+
+        <net.wangyl.behavior.ui.widget.FatherView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="120dp"
+            android:background="@color/curve_line_color_red"
+            >
+
+            <net.wangyl.behavior.ui.widget.ChildView
+                android:background="@color/text_blue"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_margin="50dp"
+
+                />
+
+        </net.wangyl.behavior.ui.widget.FatherView>
+
+    </net.wangyl.behavior.ui.widget.GrandView>
+
+
+</FrameLayout>

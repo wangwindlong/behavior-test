@@ -10,6 +10,7 @@ import android.widget.OverScroller;
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -71,7 +72,9 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
     }
 
     @Override
-    public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, View child, View directTargetChild, View target, int nestedScrollAxes) {
+    public boolean onStartNestedScroll(@NotNull CoordinatorLayout coordinatorLayout,
+                                       @NotNull View child, @NotNull View directTargetChild,
+                                       @NotNull View target, int nestedScrollAxes, @ViewCompat.NestedScrollType int type) {
         if (tabSuspension) {
             return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0 && !isClosed();
         }
@@ -109,8 +112,10 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
      * @param consumed
      */
     @Override
-    public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, View child, View target, int dx, int dy, int[] consumed) {
-        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed);
+    public void onNestedPreScroll(@NotNull CoordinatorLayout coordinatorLayout, @NotNull View child,
+                                  @NotNull View target, int dx, int dy,
+                                  @NotNull int[] consumed, @ViewCompat.NestedScrollType int type) {
+        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type);
 
         //制造滑动视察，使header的移动比手指滑动慢
         float scrollY = dy / 4.0f;
@@ -148,6 +153,15 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
                 consumed[1] = dy;//让CoordinatorLayout消费掉事件，实现整体滑动
             }
             lastPosition = pos;
+        }else if (target instanceof NestedScrollView) {//处理header滑动
+            float finalY = child.getTranslationY() - scrollY;
+            if (finalY < getHeaderOffset()) {
+                finalY = getHeaderOffset();
+            } else if (finalY > 0) {
+                finalY = 0;
+            }
+            child.setTranslationY(finalY);
+            consumed[1] = dy;
         }
     }
 
