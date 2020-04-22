@@ -1,9 +1,11 @@
-package net.wangyl.behavior;
+package net.wangyl.behavior.adapter;
 
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -12,7 +14,7 @@ public class TypePageAdapter extends FragmentPagerAdapter {
     private List<String> titles;
 
     public TypePageAdapter(FragmentManager fm) {
-        super(fm);
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
     public void setData(List<Fragment> fragments, List<String> titles) {
@@ -20,6 +22,7 @@ public class TypePageAdapter extends FragmentPagerAdapter {
         this.titles = titles;
     }
 
+    @NotNull
     @Override
     public Fragment getItem(int position) {
         return fragments.get(position);

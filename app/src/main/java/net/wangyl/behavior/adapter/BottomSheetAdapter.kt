@@ -1,10 +1,10 @@
-package net.wangyl.behavior
+package net.wangyl.behavior.adapter
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import net.wangyl.behavior.R
 import net.wangyl.behavior.databinding.ItemLayoutBinding
 
 open class BottomSheetAdapter(private val dataList: List<String>?) :

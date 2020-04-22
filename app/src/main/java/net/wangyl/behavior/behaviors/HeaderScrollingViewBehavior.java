@@ -1,4 +1,4 @@
-package net.wangyl.behavior;
+package net.wangyl.behavior.behaviors;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -11,13 +11,11 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.math.MathUtils;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.appbar.AppBarLayout;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 public abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<View> {

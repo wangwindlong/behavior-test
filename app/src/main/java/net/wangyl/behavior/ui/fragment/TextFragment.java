@@ -1,4 +1,4 @@
-package net.wangyl.behavior;
+package net.wangyl.behavior.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,13 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
+import net.wangyl.behavior.R;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class TextFragment extends Fragment {

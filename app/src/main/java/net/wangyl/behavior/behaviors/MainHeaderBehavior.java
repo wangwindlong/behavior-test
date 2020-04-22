@@ -1,4 +1,4 @@
-package net.wangyl.behavior;
+package net.wangyl.behavior.behaviors;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -12,6 +12,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import net.wangyl.behavior.ui.widget.NestedLinearLayout;
+import net.wangyl.behavior.R;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,4 +1,4 @@
-package net.wangyl.behavior;
+package net.wangyl.behavior.utils;
 
 import android.view.View;
 

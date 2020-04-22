@@ -1,4 +1,4 @@
-package net.wangyl.behavior;
+package net.wangyl.behavior.behaviors;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,19 +6,22 @@ import android.view.View;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import net.wangyl.behavior.R;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Tab Behavior
+ * Title Behavior
  */
-public class MainTabBehavior extends CoordinatorLayout.Behavior<View> {
+public class MainTitleBehavior extends CoordinatorLayout.Behavior<View> {
 
     private Context mContext;
 
-    public MainTabBehavior() {
+    public MainTitleBehavior() {
+
     }
 
-    public MainTabBehavior(Context context, AttributeSet attrs) {
+    public MainTitleBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
     }
@@ -28,11 +31,9 @@ public class MainTabBehavior extends CoordinatorLayout.Behavior<View> {
         return isDependOn(dependency);
     }
 
-
     @Override
     public boolean onDependentViewChanged(@NotNull CoordinatorLayout parent, View child, View dependency) {
-        float tabScrollY = dependency.getTranslationY() / getHeaderOffset() * (dependency.getHeight() - getTitleHeight());
-        float y = dependency.getHeight() - tabScrollY;
+        float y = -(1 - dependency.getTranslationY() / getHeaderOffset()) * getTitleHeight();
         child.setY(y);
         return true;
     }
@@ -44,7 +45,6 @@ public class MainTabBehavior extends CoordinatorLayout.Behavior<View> {
     private int getTitleHeight() {
         return mContext.getResources().getDimensionPixelOffset(R.dimen.title_height);
     }
-
 
     private boolean isDependOn(View dependency) {
         return dependency != null && dependency.getId() == R.id.header;

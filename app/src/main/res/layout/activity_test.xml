@@ -19,22 +19,21 @@
         <!--        android:clickable="true"-->
         <!--        android:focusable="true"-->
         <!--        android:focusableInTouchMode="true"-->
-        <net.wangyl.behavior.NestedLinearLayout
+        <net.wangyl.behavior.ui.widget.NestedLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true">
 
-            <net.wangyl.behavior.MyFrameLayout
+            <net.wangyl.behavior.ui.widget.MyFrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/viewpager_background"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent" />
-            </net.wangyl.behavior.MyFrameLayout>
+            </net.wangyl.behavior.ui.widget.MyFrameLayout>
             <TextView
                 android:id="@+id/header_content"
                 style="@style/TextAppearance.AppCompat.Title"
@@ -46,7 +45,7 @@
                 android:textColor="@android:color/white" />
             <!--            <androidx.viewpager.widget.ViewPager-->
 
-        </net.wangyl.behavior.NestedLinearLayout>
+        </net.wangyl.behavior.ui.widget.NestedLinearLayout>
 
 
     </FrameLayout>

@@ -1,4 +1,4 @@
-package net.wangyl.behavior
+package net.wangyl.behavior.ui
 
 import android.R
 import android.os.Bundle
@@ -7,12 +7,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_animate.*
+import net.wangyl.behavior.adapter.BottomSheetAdapter
 
 
 class AnimateActivity : AppCompatActivity() {

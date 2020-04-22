@@ -1,4 +1,4 @@
-package net.wangyl.behavior;
+package net.wangyl.behavior.ui.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;

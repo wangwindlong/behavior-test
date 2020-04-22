@@ -1,4 +1,4 @@
-package net.wangyl.behavior
+package net.wangyl.behavior.ui
 
 import android.os.Build
 import android.os.Bundle
@@ -13,7 +13,12 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-import net.wangyl.behavior.MainHeaderBehavior.OnHeaderStateListener
+import net.wangyl.behavior.behaviors.MainHeaderBehavior
+import net.wangyl.behavior.behaviors.MainHeaderBehavior.OnHeaderStateListener
+import net.wangyl.behavior.R
+import net.wangyl.behavior.ui.fragment.TextFragment
+import net.wangyl.behavior.ui.fragment.TypeFragment
+import net.wangyl.behavior.adapter.TypePageAdapter
 import java.util.*
 import kotlin.math.abs
 
@@ -55,7 +60,9 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
         mViewPager = findViewById(R.id.viewpager)
         mBackgroundPager = findViewById(R.id.viewpager_background)
         val tableLayout = findViewById<TabLayout>(R.id.tablayout)
-        val mTypeAdapter = TypePageAdapter(supportFragmentManager)
+        val mTypeAdapter = TypePageAdapter(
+            supportFragmentManager
+        )
         mTypeAdapter.setData(fragments, titles)
         mViewPager!!.adapter = mTypeAdapter
         mViewPager!!.offscreenPageLimit = titles.size - 1
@@ -72,7 +79,9 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
     }
 
     fun initBackgroundVP() {
-        val mTypeAdapter = TypePageAdapter(supportFragmentManager)
+        val mTypeAdapter = TypePageAdapter(
+            supportFragmentManager
+        )
         val fragments = ArrayList<Fragment>()
         val titles = ArrayList<String>()
         fragments.add(TextFragment.newInstance())
@@ -104,11 +113,13 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
                 mLastY = y ?: 0
             }
             MotionEvent.ACTION_MOVE -> {
-//                if (abs(x - mLastX) > abs(y - mLastY)) {
-//                    Log.e("TestActivity", "horizontal")
-//                } else  {
-//                    Log.e("TestActivity", "vertical")
-//                }
+                mBackgroundPager?.isUserInputEnabled = false
+                if (abs(x - mLastX) > abs(y - mLastY) + 50) {
+                    Log.e("TestActivity", "horizontal")
+                    mBackgroundPager?.isUserInputEnabled = true
+                } else  {
+                    Log.e("TestActivity", "vertical")
+                }
             }
         }
         return super.dispatchTouchEvent(ev)

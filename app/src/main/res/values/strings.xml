@@ -94,10 +94,10 @@
     <string name="bottom_sheet_dialog">Bottom Sheet Dialog 显示/隐藏</string>
 
 
-    <string name="behavior_main_content">net.wangyl.behavior.MainContentBehavior</string>
-    <string name="behavior_main_header">net.wangyl.behavior.MainHeaderBehavior</string>
-    <string name="behavior_main_title">net.wangyl.behavior.MainTitleBehavior</string>
-    <string name="behavior_main_tab">net.wangyl.behavior.MainTabBehavior</string>
+    <string name="behavior_main_content">net.wangyl.behavior.behaviors.MainContentBehavior</string>
+    <string name="behavior_main_header">net.wangyl.behavior.behaviors.MainHeaderBehavior</string>
+    <string name="behavior_main_title">net.wangyl.behavior.behaviors.MainTitleBehavior</string>
+    <string name="behavior_main_tab">net.wangyl.behavior.behaviors.MainTabBehavior</string>
 
 <!--    <string name="behavior_xiami_comment">com.behavior.xiami.behavior.XiamiCommentBehavior</string>-->
 <!--    <string name="behavior_xiami_title">com.behavior.xiami.behavior.XiamiTitleBehavior</string>-->

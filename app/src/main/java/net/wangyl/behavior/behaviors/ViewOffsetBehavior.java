@@ -1,10 +1,12 @@
-package net.wangyl.behavior;
+package net.wangyl.behavior.behaviors;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import net.wangyl.behavior.utils.ViewOffsetHelper;
 
 public class ViewOffsetBehavior<V extends View> extends CoordinatorLayout.Behavior<V> {
     private ViewOffsetHelper mViewOffsetHelper;
