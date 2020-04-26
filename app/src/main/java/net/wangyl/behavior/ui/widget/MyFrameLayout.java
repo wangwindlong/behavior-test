@@ -35,54 +35,62 @@ public class MyFrameLayout extends FrameLayout{
     }
 
 //    @Override
-//    public boolean dispatchTouchEvent(MotionEvent ev) {
-//        final float x = ev.getX();
-//        final float y = ev.getY();
-//        Log.e("MyFrameLayout", "dispatchTouchEvent action:" + ev.getAction() + " pixel:" + x + "," + y);
-//        final int action = ev.getAction();
-//        switch (action) {
-//            case MotionEvent.ACTION_DOWN:
-//                mDownPosX = x;
-//                mDownPosY = y;
-//
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                final float deltaX = Math.abs(x - mDownPosX);
-//                final float deltaY = Math.abs(y - mDownPosY);
-//                // 这里是够拦截的判断依据是左右滑动，读者可根据自己的逻辑进行是否拦截
-//                if (deltaX > deltaY) {
-//                    Log.e("MyFrameLayout", "左右滑动");
-//                    return super.dispatchTouchEvent(ev);
-//                } else {
-//                    Log.e("MyFrameLayout", "上下滑动");
-//                    return false;
-//                }
-//        }
-//        return super.dispatchTouchEvent(ev);
+//    public boolean onTouchEvent(MotionEvent event) {
+//        Log.e("MyFrameLayout", "onTouchEvent event:" + event);
+//        return super.onTouchEvent(event);
 //    }
 //
-//    @Override
-//    public boolean onInterceptTouchEvent(MotionEvent ev) {
-//        final float x = ev.getX();
-//        final float y = ev.getY();
-//        Log.e("MyFrameLayout", "onInterceptTouchEvent action:" + ev.getAction() + " pixel:" + x + "," + y);
-//        final int action = ev.getAction();
-//        switch (action) {
-//            case MotionEvent.ACTION_DOWN:
-//                mDownPosX = x;
-//                mDownPosY = y;
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                final float deltaX = Math.abs(x - mDownPosX);
-//                final float deltaY = Math.abs(y - mDownPosY);
-//                // 这里是够拦截的判断依据是左右滑动，读者可根据自己的逻辑进行是否拦截
-//                if (deltaX > deltaY) {
-//                    return false;
-//                } else {
-//                    return true;
-//                }
-//        }
-//
-//        return super.onInterceptTouchEvent(ev);
-//    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        final float x = ev.getX();
+        final float y = ev.getY();
+        Log.e("MyFrameLayout", "dispatchTouchEvent action:" + ev.getAction() + " pixel:" + x + "," + y);
+        final int action = ev.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mDownPosX = x;
+                mDownPosY = y;
+
+                break;
+            case MotionEvent.ACTION_MOVE:
+                final float deltaX = Math.abs(x - mDownPosX);
+                final float deltaY = Math.abs(y - mDownPosY);
+                // 这里是够拦截的判断依据是左右滑动，读者可根据自己的逻辑进行是否拦截
+                if (deltaX > deltaY) {
+                    Log.e("MyFrameLayout", "左右滑动");
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                    return super.dispatchTouchEvent(ev);
+                } else {
+                    Log.e("MyFrameLayout", "上下滑动");
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                    return false;
+                }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        final float x = ev.getX();
+        final float y = ev.getY();
+        Log.e("MyFrameLayout", "onInterceptTouchEvent action:" + ev.getAction() + " pixel:" + x + "," + y);
+        final int action = ev.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mDownPosX = x;
+                mDownPosY = y;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                final float deltaX = Math.abs(x - mDownPosX);
+                final float deltaY = Math.abs(y - mDownPosY);
+                // 这里是够拦截的判断依据是左右滑动，读者可根据自己的逻辑进行是否拦截
+                if (deltaX > deltaY) {
+                    return false;
+                } else {
+                    return true;
+                }
+        }
+
+        return super.onInterceptTouchEvent(ev);
+    }
 }

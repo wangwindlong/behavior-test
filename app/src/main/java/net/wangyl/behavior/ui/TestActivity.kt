@@ -69,6 +69,7 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
         mTypeAdapter.setData(fragments, titles)
         mViewPager!!.adapter = mTypeAdapter
         mViewPager!!.offscreenPageLimit = titles.size - 1
+
         tableLayout.setupWithViewPager(mViewPager)
         tableLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {

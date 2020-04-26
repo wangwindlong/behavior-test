@@ -8,6 +8,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import net.wangyl.behavior.utils.ViewOffsetHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ViewOffsetBehavior<V extends View> extends CoordinatorLayout.Behavior<V> {
     private ViewOffsetHelper mViewOffsetHelper;
 
@@ -22,7 +24,7 @@ public class ViewOffsetBehavior<V extends View> extends CoordinatorLayout.Behavi
     }
 
     @Override
-    public boolean onLayoutChild(CoordinatorLayout parent, V child, int layoutDirection) {
+    public boolean onLayoutChild(@NotNull CoordinatorLayout parent, @NotNull V child, int layoutDirection) {
         // First let lay the child out
         layoutChild(parent, child, layoutDirection);
 

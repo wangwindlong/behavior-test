@@ -2,8 +2,11 @@ package net.wangyl.behavior.behaviors;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.OverScroller;
 
 
@@ -27,6 +30,7 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
     private static final int STATE_CLOSED = 1;
     private static final int DURATION_SHORT = 300;
     private static final int DURATION_LONG = 600;
+    public static final String TAG = "MainHeaderBehavior";
 
     private int mCurState = STATE_OPENED;
     private OnHeaderStateListener mHeaderStateListener;
@@ -49,6 +53,9 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
 
     //tab上移结束后是否悬浮在固定位置
     private boolean tabSuspension = false;
+
+    private float mDownPosX;
+    private float mDownPosY;
 
     public MainHeaderBehavior() {
         init();
@@ -75,10 +82,12 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
     public boolean onStartNestedScroll(@NotNull CoordinatorLayout coordinatorLayout,
                                        @NotNull View child, @NotNull View directTargetChild,
                                        @NotNull View target, int nestedScrollAxes, @ViewCompat.NestedScrollType int type) {
+        boolean result = (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+        Log.d(TAG, "onStartNestedScroll =" + result);
         if (tabSuspension) {
             return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0 && !isClosed();
         }
-        return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+        return result;
     }
 
 
@@ -90,15 +99,33 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
 
     @Override
     public boolean onInterceptTouchEvent(@NotNull CoordinatorLayout parent, @NotNull final View child, MotionEvent ev) {
+        Log.d(TAG, "onInterceptTouchEvent =" + ev);
+        final float x = ev.getX();
+        final float y = ev.getY();
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downReach = false;
                 upReach = false;
+                mDownPosX = x;
+                mDownPosY = y;
                 break;
+//            case MotionEvent.ACTION_MOVE:
+//                final float deltaX = Math.abs(x - mDownPosX);
+//                final float deltaY = Math.abs(y - mDownPosY);
+//                if (deltaX > deltaY) {
+//                    Log.d(TAG, "左右滑动");
+//                    return super.onInterceptTouchEvent(parent, child, ev);
+//                } else {
+//                    Log.d(TAG, "上下滑动");
+//                    return true;
+//                }
             case MotionEvent.ACTION_UP:
                 handleActionUp(child);
                 break;
         }
+//        if (child instanceof ViewGroup) {
+//            return ((ViewGroup)child).onInterceptTouchEvent(ev);
+//        }
         return super.onInterceptTouchEvent(parent, child, ev);
     }
 
@@ -116,11 +143,14 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
                                   @NotNull View target, int dx, int dy,
                                   @NotNull int[] consumed, @ViewCompat.NestedScrollType int type) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type);
-
+        Log.d(TAG, "onNestedPreScroll target=" + target.getId() + ",nestsc=" + R.id.viewpager2_nsv + ",type=" + type+"'dy="+dy);
         //制造滑动视察，使header的移动比手指滑动慢
         float scrollY = dy / 4.0f;
 
+//        if (target instanceof NestedScrollView && target.getId() == R.id.viewpager2_nsv) {//处理header滑动
         if (target instanceof NestedLinearLayout) {//处理header滑动
+            Log.d(TAG, "scrollY=" + child + ",target.getTranslationY()=" + child.getTranslationY() +
+                    ",dx=" + dx + ",dy=" + dy);
             float finalY = child.getTranslationY() - scrollY;
             if (finalY < getHeaderOffset()) {
                 finalY = getHeaderOffset();
@@ -153,7 +183,8 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
                 consumed[1] = dy;//让CoordinatorLayout消费掉事件，实现整体滑动
             }
             lastPosition = pos;
-        }else if (target instanceof NestedScrollView) {//处理header滑动
+        }
+        else if (target instanceof NestedScrollView) {//处理header滑动
             float finalY = child.getTranslationY() - scrollY;
             if (finalY < getHeaderOffset()) {
                 finalY = getHeaderOffset();
@@ -163,6 +194,23 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
             child.setTranslationY(finalY);
             consumed[1] = dy;
         }
+//        else if (target instanceof NestedScrollView) {//处理NestedScrollview滑动
+//            float scroly = target.getScrollY();
+//            float childheight = child.getMeasuredHeight();
+//            Log.e(TAG, "child=" + child + ",childheight=" + childheight + ",child.getTranslationY()=" +
+//                    child.getTranslationY() + ",scrollY=" + scrollY);
+//            if (scroly == 0) {
+//                consumed[1] = dy;
+//                float finalY = child.getTranslationY() + dy;
+//                if (finalY < 0) {
+//                    finalY = 0;
+//                } else if (finalY > childheight) {
+//                    finalY = childheight;
+//                }
+//                Log.e(TAG, "finalY=" + finalY + ",getHeaderOffset()=" + getHeaderOffset());
+//                child.setTranslationY(finalY);
+//            }
+//        }
     }
 
     /**

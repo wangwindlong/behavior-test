@@ -16,7 +16,7 @@ import androidx.core.view.ViewCompat;
  * 实现header跟随手指触发整体滑动
  */
 public class NestedLinearLayout extends FrameLayout implements NestedScrollingChild {
-
+    public static final String TAG = "NestedLinearLayout";
     private final int[] offset = new int[2];
     private final int[] consumed = new int[2];
 
@@ -44,7 +44,7 @@ public class NestedLinearLayout extends FrameLayout implements NestedScrollingCh
     public boolean onTouchEvent(MotionEvent event) {
         int y = (int) event.getY();
         int x = (int) event.getX();
-        Log.d("NestedLinearLayout", "onTouchEvent action:" + event.getAction() + " pixel:" + x + "," + y);
+        Log.d(TAG, "onTouchEvent action:" + event.getAction() + " pixel:" + x + "," + y);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lastY = y;
@@ -62,37 +62,44 @@ public class NestedLinearLayout extends FrameLayout implements NestedScrollingCh
         return true;
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        final float x = ev.getX();
-        final float y = ev.getY();
-        Log.d("NestedLinearLayout", "dispatchTouchEvent action:" + ev.getAction() + " pixel:" + x + "," + y);
-        final int action = ev.getAction();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                mDownPosX = x;
-                mDownPosY = y;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                final float deltaX = Math.abs(x - mDownPosX);
-                final float deltaY = Math.abs(y - mDownPosY);
-                if (deltaX > deltaY) {
-                    Log.d("NestedLinearLayout", "左右滑动");
-                    return super.dispatchTouchEvent(ev);
-                } else {
-                    Log.d("NestedLinearLayout", "上下滑动");
-                    return true;
-                }
-        }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        final float x = ev.getX();
+//        final float y = ev.getY();
+//        Log.d(TAG, "dispatchTouchEvent action:" + ev.getAction() + " pixel:" + x + "," + y);
+//        final int action = ev.getAction();
+//        switch (action) {
+//            case MotionEvent.ACTION_DOWN:
+//                mDownPosX = x;
+//                mDownPosY = y;
+//                // 保证子View能够接收到Action_move事件
+//                getParent().requestDisallowInterceptTouchEvent(true);
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                final float deltaX = Math.abs(x - mDownPosX);
+//                final float deltaY = Math.abs(y - mDownPosY);
+//                if (deltaX > deltaY) {
+//                    Log.d(TAG, "左右滑动");
+//                    getParent().requestDisallowInterceptTouchEvent(false);
+//                } else {
+//                    Log.d(TAG, "上下滑动");
+//                    getParent().requestDisallowInterceptTouchEvent(true);
+//                }
+//                break;
+//            case MotionEvent.ACTION_CANCEL:
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                break;
+//        }
 //        return super.dispatchTouchEvent(ev);
-        return true;
-    }
+////        return true;
+//    }
 //
 //    @Override
 //    public boolean onInterceptTouchEvent(MotionEvent ev) {
 //        final float x = ev.getX();
 //        final float y = ev.getY();
-//        Log.e("NestedLinearLayout", "onInterceptTouchEvent action:" + ev.getAction() + " pixel:" + x + "," + y);
+//        Log.e(TAG, "onInterceptTouchEvent action:" + ev.getAction() + " pixel:" + x + "," + y);
 //        final int action = ev.getAction();
 //        switch (action) {
 //            case MotionEvent.ACTION_DOWN:
@@ -102,15 +109,16 @@ public class NestedLinearLayout extends FrameLayout implements NestedScrollingCh
 //            case MotionEvent.ACTION_MOVE:
 //                final float deltaX = Math.abs(x - mDownPosX);
 //                final float deltaY = Math.abs(y - mDownPosY);
-//                // 这里是够拦截的判断依据是左右滑动，读者可根据自己的逻辑进行是否拦截
+//                Log.e(TAG, "onInterceptTouchEvent action:2 return:" + (deltaX <= deltaY));
 //                if (deltaX > deltaY) {
-//                    return super.onInterceptTouchEvent(ev);
+//                    return false;
 //                } else {
 //                    return true;
 //                }
 //        }
 //
-//        return super.onInterceptTouchEvent(ev);
+////        return super.onInterceptTouchEvent(ev);
+//        return false;
 //    }
 
 
@@ -126,6 +134,10 @@ public class NestedLinearLayout extends FrameLayout implements NestedScrollingCh
 
     @Override
     public boolean startNestedScroll(int axes) {
+        Log.i(TAG, "startNestedScroll axes=" + axes);
+//        if (axes == SCROLL_AXIS_VERTICAL) {
+//            return true;
+//        }
         return getScrollingChildHelper().startNestedScroll(axes);
     }
 
@@ -149,6 +161,7 @@ public class NestedLinearLayout extends FrameLayout implements NestedScrollingCh
     @Override
     public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed,
                                            int[] offsetInWindow) {
+        Log.i(TAG, "dispatchNestedPreScroll dx=" + dx + ",dy=" + dy);
         return getScrollingChildHelper().dispatchNestedPreScroll(dx, dy,
                 consumed, offsetInWindow);
     }

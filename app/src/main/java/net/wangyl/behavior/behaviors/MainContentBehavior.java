@@ -2,6 +2,7 @@ package net.wangyl.behavior.behaviors;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 public class MainContentBehavior extends HeaderScrollingViewBehavior {
     private Context mContext;
+    public static final String TAG = "MainContentBehavior";
 
     public MainContentBehavior() {
     }
@@ -35,6 +37,7 @@ public class MainContentBehavior extends HeaderScrollingViewBehavior {
     public boolean onDependentViewChanged(@NotNull CoordinatorLayout parent, View child, View dependency) {
         float contentScrollY = dependency.getTranslationY() / getHeaderOffset() * (dependency.getHeight() - getFinalHeight());
         float y = dependency.getHeight() - contentScrollY;
+        Log.d(TAG, "onDependentViewChanged y=" + y + ",dependency=" + dependency + ",child=" + child);
         child.setY(y);
         return true;
     }
@@ -81,7 +84,9 @@ public class MainContentBehavior extends HeaderScrollingViewBehavior {
 
 
     private boolean isDependOn(View dependency) {
-        return dependency != null && dependency.getId() == R.id.header;
+        boolean isDependOn = dependency != null && dependency.getId() == R.id.header;
+        Log.d(TAG, "isDependOn=" + isDependOn);
+        return isDependOn;
     }
 
 
