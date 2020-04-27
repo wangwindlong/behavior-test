@@ -28,6 +28,7 @@ import kotlin.math.abs
 
 class TestActivity : AppCompatActivity(), OnHeaderStateListener {
     private var mViewPager: ViewPager? = null
+    private var my_viewpager: ViewPager? = null
 //    private var mBackgroundPager: ViewPager? = null
     private var mBackgroundPager: ViewPager2? = null
     private val mHeaderBehavior: MainHeaderBehavior? = null
@@ -61,6 +62,7 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
         titles.add("tab2")
         titles.add("tab3")
         mViewPager = findViewById(R.id.viewpager)
+        my_viewpager = findViewById(R.id.my_viewpager)
         mBackgroundPager = findViewById(R.id.viewpager_background)
         val tableLayout = findViewById<TabLayout>(R.id.tablayout)
         val mTypeAdapter = TypePageAdapter(
@@ -69,6 +71,23 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
         mTypeAdapter.setData(fragments, titles)
         mViewPager!!.adapter = mTypeAdapter
         mViewPager!!.offscreenPageLimit = titles.size - 1
+
+
+        val fragments2 = ArrayList<Fragment>()
+        val titles2 = ArrayList<String>()
+        fragments2.add(TypeFragment.newInstance())
+        fragments2.add(TypeFragment.newInstance())
+        fragments2.add(TypeFragment.newInstance())
+        titles2.add("tab1")
+        titles2.add("tab2")
+        titles2.add("tab3")
+        val mTypeAdapter2 = TypePageAdapter(
+            supportFragmentManager
+        )
+        mTypeAdapter2.setData(fragments2, titles2)
+        my_viewpager!!.adapter = mTypeAdapter2
+        mViewPager!!.offscreenPageLimit = titles2.size - 1
+
 
         tableLayout.setupWithViewPager(mViewPager)
         tableLayout.addOnTabSelectedListener(object : OnTabSelectedListener {

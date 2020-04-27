@@ -17,6 +17,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import net.wangyl.behavior.ui.widget.MyViewPager;
 import net.wangyl.behavior.ui.widget.NestedLinearLayout;
 import net.wangyl.behavior.R;
 
@@ -148,7 +149,7 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
         float scrollY = dy / 4.0f;
 
 //        if (target instanceof NestedScrollView && target.getId() == R.id.viewpager2_nsv) {//处理header滑动
-        if (target instanceof NestedLinearLayout) {//处理header滑动
+        if (target instanceof MyViewPager) {//处理header滑动
             Log.d(TAG, "scrollY=" + child + ",target.getTranslationY()=" + child.getTranslationY() +
                     ",dx=" + dx + ",dy=" + dy);
             float finalY = child.getTranslationY() - scrollY;
@@ -184,33 +185,32 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
             }
             lastPosition = pos;
         }
-        else if (target instanceof NestedScrollView) {//处理header滑动
-            float finalY = child.getTranslationY() - scrollY;
-            if (finalY < getHeaderOffset()) {
-                finalY = getHeaderOffset();
-            } else if (finalY > 0) {
-                finalY = 0;
-            }
-            child.setTranslationY(finalY);
-            consumed[1] = dy;
-        }
-//        else if (target instanceof NestedScrollView) {//处理NestedScrollview滑动
-//            float scroly = target.getScrollY();
-//            float childheight = child.getMeasuredHeight();
-//            Log.e(TAG, "child=" + child + ",childheight=" + childheight + ",child.getTranslationY()=" +
-//                    child.getTranslationY() + ",scrollY=" + scrollY);
-//            if (scroly == 0) {
-//                consumed[1] = dy;
-//                float finalY = child.getTranslationY() + dy;
-//                if (finalY < 0) {
-//                    finalY = 0;
-//                } else if (finalY > childheight) {
-//                    finalY = childheight;
-//                }
-//                Log.e(TAG, "finalY=" + finalY + ",getHeaderOffset()=" + getHeaderOffset());
-//                child.setTranslationY(finalY);
+//        else if (target instanceof NestedScrollView && target.getId() == R.id.calendar_sv) {//处理header滑动
+//            float finalY = child.getTranslationY() - scrollY;
+//            if (finalY < getHeaderOffset()) {
+//                finalY = getHeaderOffset();
+//            } else if (finalY > 0) {
+//                finalY = 0;
 //            }
+//            child.setTranslationY(finalY);
+//            consumed[1] = dy;
 //        }
+        else if (target instanceof NestedScrollView && target.getId() == R.id.calendar_sv) {//处理NestedScrollview滑动
+            float scroly = target.getScrollY();
+            float childheight = child.getMeasuredHeight();
+            Log.e(TAG, "child=" + child + ",childheight=" + childheight + ",child.getTranslationY()=" +
+                    child.getTranslationY() + ",scrollY=" + scrollY);
+            if (scroly == 0) {
+                float finalY = child.getTranslationY() - scrollY;
+                if (finalY < getHeaderOffset()) {
+                    finalY = getHeaderOffset();
+                } else if (finalY > 0) {
+                    finalY = 0;
+                }
+                child.setTranslationY(finalY);
+                consumed[1] = dy;
+            }
+        }
     }
 
     /**

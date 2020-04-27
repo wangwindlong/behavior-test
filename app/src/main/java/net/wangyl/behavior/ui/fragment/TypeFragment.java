@@ -52,7 +52,7 @@ public class TypeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_type, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.list);
         List<String> list = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 5; i++) {
             list.add(i + 1 + "");
         }
         TypeAdapter adapter = new TypeAdapter(mContext, list, false);
