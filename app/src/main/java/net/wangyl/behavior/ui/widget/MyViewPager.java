@@ -20,6 +20,7 @@ public class MyViewPager extends ViewPager implements NestedScrollingChild {
     private NestedScrollingChildHelper mScrollingChildHelper;
     private int lastY;
     private int lastX;
+    private int downX;
     private int downY;
     private final int[] offset = new int[2];
     private final int[] consumed = new int[2];
@@ -50,7 +51,7 @@ public class MyViewPager extends ViewPager implements NestedScrollingChild {
         Log.d(TAG, "onTouchEvent action:" + event.getAction() + " pixel:" + x + "," + y + ",mTouchSlop=" + mTouchSlop);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                lastY = y;
+                downX = lastY = y;
                 downY = lastX = x;
                 mState = STATE_UNKOWN;
                 startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
@@ -61,10 +62,10 @@ public class MyViewPager extends ViewPager implements NestedScrollingChild {
                 int dy = lastY - y;
                 final float deltaX = Math.abs(x - lastX);
                 final float deltaY = Math.abs(y - lastY);
-                if (deltaX > mTouchSlop && deltaX * 0.5f > deltaY) {
-                    if (mState == STATE_UNKOWN) mState = STATE_X;
-                } else if (deltaY > mTouchSlop || Math.abs(y - downY) > mTouchSlop) {
-                    if (mState == STATE_UNKOWN) mState = STATE_Y;
+                if ((deltaX > mTouchSlop ||Math.abs(x - downX) > mTouchSlop) && deltaX * 0.5f > deltaY && mState == STATE_UNKOWN) {
+                    mState = STATE_X;
+                } else if ((deltaY > mTouchSlop || Math.abs(y - downY) > mTouchSlop) && mState == STATE_UNKOWN) {
+                    mState = STATE_Y;
                 }
                 Log.d(TAG, "ACTION_MOVE mState:" + mState + " deltaX:" + deltaX + ",deltaY:" + deltaY);
                 if (mState == STATE_Y) dispatchNestedPreScroll(0, dy, consumed, offset);
@@ -72,7 +73,7 @@ public class MyViewPager extends ViewPager implements NestedScrollingChild {
                 lastY = y;
                 break;
         }
-        super.onTouchEvent(event);
+        if (mState == STATE_X || mState == STATE_UNKOWN) super.onTouchEvent(event);
         return true;
     }
 
