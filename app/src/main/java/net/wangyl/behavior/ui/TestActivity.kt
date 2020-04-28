@@ -5,9 +5,11 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -31,10 +33,12 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
     private var my_viewpager: ViewPager? = null
 //    private var mBackgroundPager: ViewPager? = null
     private var mBackgroundPager: ViewPager2? = null
-    private val mHeaderBehavior: MainHeaderBehavior? = null
+    private var mHeaderBehavior: MainHeaderBehavior? = null
     private var mLastX:Int = 0
     private var mLastY:Int = 0
     private val mDelta:Int = 50
+
+    private var mHeader: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -46,13 +50,19 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
         }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        //
-//        mHeaderBehavior = (HeaderBehavior) ((CoordinatorLayout.LayoutParams) (findViewById(R.id.header)).getLayoutParams()).getBehavior();
-//
-//        if (mHeaderBehavior != null) {
-////            mHeaderBehavior.setTabSuspension(true);
-//            mHeaderBehavior.setHeaderStateListener(this);
+        mHeader = findViewById(R.id.header)
+//        mHeader?.apply {
+//            translationY = context?.resources?.getDimensionPixelOffset(R.dimen.header_offset)?.toFloat() ?: 0f
 //        }
+
+        mHeaderBehavior = (mHeader?.layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as MainHeaderBehavior?
+        mHeader?.post {
+            mHeaderBehavior?.closeHeader()
+        }
+        if (mHeaderBehavior != null) {
+//            mHeaderBehavior.setTabSuspension(true);
+            mHeaderBehavior?.setHeaderStateListener(this)
+        }
         val fragments = ArrayList<Fragment>()
         val titles = ArrayList<String>()
         fragments.add(TypeFragment.newInstance())
@@ -151,6 +161,8 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
         return super.dispatchTouchEvent(ev)
     }
 
+
+
     override fun onHeaderClosed() {
         Log.e("status", "closed")
     }
@@ -160,8 +172,8 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
     }
 
     override fun onBackPressed() {
-        if (mHeaderBehavior != null && mHeaderBehavior.isClosed) {
-            mHeaderBehavior.openHeader()
+        if (mHeaderBehavior != null && mHeaderBehavior?.isClosed != false) {
+            mHeaderBehavior?.closeHeader()
         } else {
             super.onBackPressed()
         }
