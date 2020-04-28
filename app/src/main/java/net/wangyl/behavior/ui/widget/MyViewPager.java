@@ -62,10 +62,10 @@ public class MyViewPager extends ViewPager implements NestedScrollingChild {
                 int dy = lastY - y;
                 final float deltaX = Math.abs(x - lastX);
                 final float deltaY = Math.abs(y - lastY);
-                if ((deltaX > mTouchSlop ||Math.abs(x - downX) > mTouchSlop) && deltaX * 0.5f > deltaY && mState == STATE_UNKOWN) {
-                    mState = STATE_X;
-                } else if ((deltaY > mTouchSlop || Math.abs(y - downY) > mTouchSlop) && mState == STATE_UNKOWN) {
-                    mState = STATE_Y;
+                if (deltaX * 0.5f > deltaY || Math.abs(x - downX) > Math.abs(y - downY) + 40) {
+                    if (mState == STATE_UNKOWN) mState = STATE_X;
+                } else if ((deltaY > deltaX || Math.abs(y - downY) > Math.abs(x - downX) + 40)) {
+                    if (mState == STATE_UNKOWN) mState = STATE_Y;
                 }
                 Log.d(TAG, "ACTION_MOVE mState:" + mState + " deltaX:" + deltaX + ",deltaY:" + deltaY);
                 if (mState == STATE_Y) dispatchNestedPreScroll(0, dy, consumed, offset);

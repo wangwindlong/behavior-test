@@ -24,6 +24,7 @@ import net.wangyl.behavior.ui.fragment.TextFragment
 import net.wangyl.behavior.ui.fragment.TypeFragment
 import net.wangyl.behavior.adapter.TypePageAdapter
 import net.wangyl.behavior.ui.fragment.CalendarFragment
+import net.wangyl.behavior.ui.fragment.ImageFragment
 import java.util.*
 import kotlin.math.abs
 
@@ -56,9 +57,9 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
 //        }
 
         mHeaderBehavior = (mHeader?.layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as MainHeaderBehavior?
-        mHeader?.post {
+        mHeader?.postDelayed({
             mHeaderBehavior?.closeHeader()
-        }
+        },1000)
         if (mHeaderBehavior != null) {
 //            mHeaderBehavior.setTabSuspension(true);
             mHeaderBehavior?.setHeaderStateListener(this)
@@ -85,9 +86,9 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
 
         val fragments2 = ArrayList<Fragment>()
         val titles2 = ArrayList<String>()
-        fragments2.add(TypeFragment.newInstance())
-        fragments2.add(TypeFragment.newInstance())
-        fragments2.add(TypeFragment.newInstance())
+        fragments2.add(ImageFragment.newInstance())
+        fragments2.add(ImageFragment.newInstance())
+        fragments2.add(ImageFragment.newInstance())
         titles2.add("tab1")
         titles2.add("tab2")
         titles2.add("tab3")
