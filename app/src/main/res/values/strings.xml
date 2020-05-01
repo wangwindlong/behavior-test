@@ -190,4 +190,5 @@
 
     <string name="simple">Simple style</string>
     <string name="simple_desc">Simple calendar</string>
+    <string name="click_me">点我</string>
 </resources>

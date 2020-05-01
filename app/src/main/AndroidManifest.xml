@@ -28,6 +28,9 @@
         <activity
             android:name=".ui.TestTouchActivity"
             android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".ui.TestTouch2Activity"
+            android:screenOrientation="fullSensor" />
     </application>
 
 </manifest>

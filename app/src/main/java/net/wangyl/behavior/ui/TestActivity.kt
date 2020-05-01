@@ -113,6 +113,9 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
         top_button.setOnClickListener {
             startActivity(Intent(this@TestActivity, TestTouchActivity::class.java))
         }
+        header_content.setOnClickListener {
+            startActivity(Intent(this@TestActivity, TestTouch2Activity::class.java))
+        }
     }
 
     fun initBackgroundVP() {
@@ -146,8 +149,8 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
         val y =  ev?.getY()?.toInt() ?: 0
         when (action) {
             MotionEvent.ACTION_DOWN -> {
-                mLastX = x ?: 0
-                mLastY = y ?: 0
+                mLastX = x
+                mLastY = y
             }
             MotionEvent.ACTION_MOVE -> {
 //                mBackgroundPager?.isUserInputEnabled = false
