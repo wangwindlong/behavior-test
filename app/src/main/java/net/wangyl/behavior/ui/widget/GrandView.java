@@ -11,6 +11,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 
+/**
+ * view绘制流程： https://jsonchao.github.io/2018/10/28/Android%20View%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B/
+ * scrollview的高度绘制： https://blog.csdn.net/brycegao321/article/details/87186309
+ * 安卓事件分发图解： https://www.jianshu.com/p/e99b5e8bd67b
+ * 思考： 平级 和 嵌套viewgroup 事件回收？
+ */
 public class GrandView extends ViewGroup {
     public static final String TAG = "GrandView";
 

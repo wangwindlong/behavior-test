@@ -18,22 +18,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<View> {
-    final Rect mTempRect1 = new Rect();
-    final Rect mTempRect2 = new Rect();
+abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<View> {
+
+    private final Rect mTempRect1 = new Rect();
+    private final Rect mTempRect2 = new Rect();
 
     private int mVerticalLayoutGap = 0;
     private int mOverlayTop;
 
-    public HeaderScrollingViewBehavior() {
-    }
+    public HeaderScrollingViewBehavior() {}
 
     public HeaderScrollingViewBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public boolean onMeasureChild(@NotNull CoordinatorLayout parent, View child,
+    public boolean onMeasureChild(CoordinatorLayout parent, View child,
                                   int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec,
                                   int heightUsed) {
         final int childLpHeight = child.getLayoutParams().height;
@@ -58,24 +58,26 @@ public abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<Vie
                     }
                 }
 
-                int availableHeight = View.MeasureSpec.getSize(parentHeightMeasureSpec);
-                if (availableHeight == 0) {
-                    // If the measure spec doesn't specify a size, use the current height
-                    availableHeight = parent.getHeight();
+                if (ViewCompat.isLaidOut(header)) {
+                    int availableHeight = View.MeasureSpec.getSize(parentHeightMeasureSpec);
+                    if (availableHeight == 0) {
+                        // If the measure spec doesn't specify a size, use the current height
+                        availableHeight = parent.getHeight();
+                    }
+
+                    final int height = availableHeight - header.getMeasuredHeight()
+                            + getScrollRange(header);
+                    final int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height,
+                            childLpHeight == ViewGroup.LayoutParams.MATCH_PARENT
+                                    ? View.MeasureSpec.EXACTLY
+                                    : View.MeasureSpec.AT_MOST);
+
+                    // Now measure the scrolling view with the correct height
+                    parent.onMeasureChild(child, parentWidthMeasureSpec,
+                            widthUsed, heightMeasureSpec, heightUsed);
+
+                    return true;
                 }
-
-                final int height = availableHeight - header.getMeasuredHeight()
-                        + getScrollRange(header);
-                final int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height,
-                        childLpHeight == ViewGroup.LayoutParams.MATCH_PARENT
-                                ? View.MeasureSpec.EXACTLY
-                                : View.MeasureSpec.AT_MOST);
-
-                // Now measure the scrolling view with the correct height
-                parent.onMeasureChild(child, parentWidthMeasureSpec,
-                        widthUsed, heightMeasureSpec, heightUsed);
-
-                return true;
             }
         }
         return false;
@@ -97,23 +99,6 @@ public abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<Vie
                     parent.getHeight() + header.getBottom()
                             - parent.getPaddingBottom() - lp.bottomMargin);
 
-            //修改代码，通过反射执行getLastWindowInsets()方法
-//            try {
-//                Method method = parent.getClass().getDeclaredMethod("getLastWindowInsets", (Class<?>[]) new Object[]{});
-//                method.setAccessible(true);
-//                final WindowInsetsCompat parentInsets = (WindowInsetsCompat) method.invoke(parent);
-//                if (parentInsets != null && ViewCompat.getFitsSystemWindows(parent)
-//                        && !ViewCompat.getFitsSystemWindows(child)) {
-//                    // If we're set to handle insets but this child isn't, then it has been measured as
-//                    // if there are no insets. We need to lay it out to match horizontally.
-//                    // Top and bottom and already handled in the logic above
-//                    available.left += parentInsets.getSystemWindowInsetLeft();
-//                    available.right -= parentInsets.getSystemWindowInsetRight();
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-
             final Rect out = mTempRect2;
             GravityCompat.apply(resolveGravity(lp.gravity), child.getMeasuredWidth(),
                     child.getMeasuredHeight(), available, out, layoutDirection);
@@ -134,17 +119,20 @@ public abstract class HeaderScrollingViewBehavior extends ViewOffsetBehavior<Vie
     }
 
     final int getOverlapPixelsForOffset(final View header) {
-        return mOverlayTop == 0 ? 0 : MathUtils.clamp(
-                (int) (getOverlapRatioForOffset(header) * mOverlayTop), 0, mOverlayTop);
+        return mOverlayTop == 0
+                ? 0
+                : MathUtils.clamp(Math.round(getOverlapRatioForOffset(header) * mOverlayTop),
+                0, mOverlayTop);
+
     }
 
     private static int resolveGravity(int gravity) {
         return gravity == Gravity.NO_GRAVITY ? GravityCompat.START | Gravity.TOP : gravity;
     }
 
-    protected abstract View findFirstDependency(List<View> views);
+    abstract View findFirstDependency(List<View> views);
 
-    protected int getScrollRange(View v) {
+    int getScrollRange(View v) {
         return v.getMeasuredHeight();
     }
 

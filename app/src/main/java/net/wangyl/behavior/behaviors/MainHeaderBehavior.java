@@ -17,6 +17,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import net.wangyl.behavior.BuildConfig;
 import net.wangyl.behavior.ui.widget.MyViewPager;
 import net.wangyl.behavior.ui.widget.NestedLinearLayout;
 import net.wangyl.behavior.R;
@@ -91,22 +92,31 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
         return result;
     }
 
+    /**
+     * settle here
+     */
+    @Override
+    public void onStopNestedScroll(@NotNull CoordinatorLayout parent, @NotNull View child, @NotNull View target, int type) {
+        handleActionUp(parent, child);
+    }
+
 
     @Override
     public boolean onNestedPreFling(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, float velocityX, float velocityY) {
         lastPosition = -1;
-        return !isClosed();
+        if (child.getTranslationY() == 0)
+            return false;
+        return !isClosed(child);
     }
 
     @Override
     public boolean onInterceptTouchEvent(@NotNull CoordinatorLayout parent, @NotNull final View child, MotionEvent ev) {
-        Log.d(TAG, "onInterceptTouchEvent =" + ev);
+//        Log.d(TAG, "onInterceptTouchEvent =" + ev);
         final float x = ev.getX();
         final float y = ev.getY();
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                downReach = false;
-                upReach = false;
+                updateReach(child);
                 mDownPosX = x;
                 mDownPosY = y;
                 break;
@@ -121,13 +131,19 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
 //                    return true;
 //                }
             case MotionEvent.ACTION_UP:
-                handleActionUp(child);
+//                handleActionUp(parent, child);
                 break;
         }
 //        if (child instanceof ViewGroup) {
 //            return ((ViewGroup)child).onInterceptTouchEvent(ev);
 //        }
         return super.onInterceptTouchEvent(parent, child, ev);
+    }
+
+    private void updateReach(View child) {
+        upReach = child.getTranslationY() == getHeaderOffset();
+        downReach = false;
+        Log.d(TAG,"updateReach downReach="+upReach);
     }
 
 
@@ -144,10 +160,11 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
                                   @NotNull View target, int dx, int dy,
                                   @NotNull int[] consumed, @ViewCompat.NestedScrollType int type) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type);
-        Log.d(TAG, "onNestedPreScroll target=" + target.getId() + ",nestsc=" + R.id.viewpager2_nsv + ",type=" + type+"'dy="+dy);
-        //制造滑动视察，使header的移动比手指滑动慢
+        Log.d(TAG, "onNestedPreScroll target=" + target.getId() +
+                ",nestsc=" + R.id.viewpager2_nsv + ",recyclerview id=" + R.id.list +
+                ",calendarsc id=" + R.id.calendar_sv + ",type=" + type + "'dy=" + dy);
+        //制造滑动视察，使header的移动比手指滑动慢   dy>0 scroll up;dy<0,scroll down
         float scrollY = dy / 4.0f;
-
 //        if (target instanceof NestedScrollView && target.getId() == R.id.viewpager2_nsv) {//处理header滑动
         if (target instanceof MyViewPager) {//处理header滑动
             Log.d(TAG, "scrollY=" + child + ",target.getTranslationY()=" + child.getTranslationY() +
@@ -213,24 +230,40 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
         }
     }
 
+    @Override
+    public void onNestedScroll(@NotNull CoordinatorLayout coordinatorLayout, @NotNull View child, @NotNull View target,
+                               int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type, @NonNull int[] consumed) {
+        float halfOfDis = dyUnconsumed / 4.0f;
+//        if (!canScroll(child, halfOfDis)) {
+//            child.setTranslationY(halfOfDis > 0 ? getHeaderOffset() : 0);
+//        } else {
+//            child.setTranslationY(child.getTranslationY() - halfOfDis);
+//        }
+    }
+
     /**
      * 是否可以整体滑动
      *
      * @return
      */
     private boolean canScroll(View child, float scrollY) {
-        if (scrollY > 0 && child.getTranslationY() > getHeaderOffset()) {
+//        if (scrollY > 0 && child.getTranslationY() > getHeaderOffset()) {
+//            return true;
+//        }
+//        if (child.getTranslationY() == getHeaderOffset() && upReach) {
+//            return true;
+//        }
+//        if (scrollY < 0 && !downReach) {
+//            return true;
+//        }
+
+        if (scrollY > 0) { //上滑
+
+        }
+        int pendingTranslationY = (int) (child.getTranslationY() - scrollY);
+        if (pendingTranslationY >= getHeaderOffset() && pendingTranslationY <= 0) {
             return true;
         }
-
-        if (child.getTranslationY() == getHeaderOffset() && upReach) {
-            return true;
-        }
-
-        if (scrollY < 0 && !downReach) {
-            return true;
-        }
-
         return false;
     }
 
@@ -238,20 +271,21 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
         return mContext.getResources().getDimensionPixelOffset(R.dimen.header_offset);
     }
 
-    private void handleActionUp(View child) {
+    private void handleActionUp(CoordinatorLayout parent, View child) {
         if (mFlingRunnable != null) {
             child.removeCallbacks(mFlingRunnable);
             mFlingRunnable = null;
         }
         //手指抬起时，header上滑距离超过总距离三分之一，则整体自动上滑到关闭状态
+        mFlingRunnable = new FlingRunnable(parent, child);
         if (child.getTranslationY() < getHeaderOffset() / 3.0f) {
-            scrollToClose(DURATION_SHORT);
+            mFlingRunnable.scrollToClosed(DURATION_SHORT);
         } else {
-            scrollToOpen(DURATION_SHORT);
+            mFlingRunnable.scrollToOpen(DURATION_SHORT);
         }
     }
 
-    private void onFlingFinished(View layout) {
+    private void onFlingFinished(CoordinatorLayout parent, View layout) {
         changeState(isClosed(layout) ? STATE_CLOSED : STATE_OPENED);
     }
 
@@ -263,12 +297,15 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
     }
 
     private void openHeader(int duration) {
-        if (isClosed() && mChild.get() != null) {
+        View child = mChild.get();
+        CoordinatorLayout parent = mParent.get();
+        if (isClosed() && child != null) {
             if (mFlingRunnable != null) {
-                mChild.get().removeCallbacks(mFlingRunnable);
+                child.removeCallbacks(mFlingRunnable);
                 mFlingRunnable = null;
             }
-            scrollToOpen(duration);
+            mFlingRunnable = new FlingRunnable(parent, child);
+            mFlingRunnable.scrollToOpen(duration);
         }
     }
 
@@ -277,12 +314,15 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
     }
 
     private void closeHeader(int duration) {
-        if (!isClosed() && mChild.get() != null) {
+        View child = mChild.get();
+        CoordinatorLayout parent = mParent.get();
+        if (!isClosed()) {
             if (mFlingRunnable != null) {
-                mChild.get().removeCallbacks(mFlingRunnable);
+                child.removeCallbacks(mFlingRunnable);
                 mFlingRunnable = null;
             }
-            scrollToClose(duration);
+            mFlingRunnable = new FlingRunnable(parent, child);
+            mFlingRunnable.scrollToClosed(duration);
         }
     }
 
@@ -311,27 +351,27 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
         }
     }
 
-    private void scrollToClose(int duration) {
-        int curTranslationY = (int) mChild.get().getTranslationY();
-        int dy = getHeaderOffset() - curTranslationY;
-        mOverScroller.startScroll(0, curTranslationY, 0, dy, duration);
-        start();
-    }
-
-    private void scrollToOpen(int duration) {
-        float curTranslationY = mChild.get().getTranslationY();
-        mOverScroller.startScroll(0, (int) curTranslationY, 0, (int) -curTranslationY, duration);
-        start();
-    }
-
-    private void start() {
-        if (mOverScroller.computeScrollOffset()) {
-            mFlingRunnable = new FlingRunnable(mParent.get(), mChild.get());
-            ViewCompat.postOnAnimation(mChild.get(), mFlingRunnable);
-        } else {
-            onFlingFinished(mChild.get());
-        }
-    }
+//    private void scrollToClose(int duration) {
+//        int curTranslationY = (int) mChild.get().getTranslationY();
+//        int dy = getHeaderOffset() - curTranslationY;
+//        mOverScroller.startScroll(0, curTranslationY, 0, dy, duration);
+//        start();
+//    }
+//
+//    private void scrollToOpen(int duration) {
+//        float curTranslationY = mChild.get().getTranslationY();
+//        mOverScroller.startScroll(0, (int) curTranslationY, 0, (int) -curTranslationY, duration);
+//        start();
+//    }
+//
+//    private void start() {
+//        if (mOverScroller.computeScrollOffset()) {
+//            mFlingRunnable = new FlingRunnable(mParent.get(), mChild.get());
+//            ViewCompat.postOnAnimation(mChild.get(), mFlingRunnable);
+//        } else {
+//            onFlingFinished(mChild.get());
+//        }
+//    }
 
     private class FlingRunnable implements Runnable {
         private final CoordinatorLayout mParent;
@@ -346,11 +386,42 @@ public class MainHeaderBehavior extends ViewOffsetBehavior<View> {
         public void run() {
             if (mLayout != null && mOverScroller != null) {
                 if (mOverScroller.computeScrollOffset()) {
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "FlingRunnable run: " + mOverScroller.getCurrY());
+                    }
                     mLayout.setTranslationY(mOverScroller.getCurrY());
                     ViewCompat.postOnAnimation(mLayout, this);
                 } else {
-                    onFlingFinished(mLayout);
+                    onFlingFinished(mParent, mLayout);
                 }
+            }
+        }
+
+        public void scrollToClosed(int duration) {
+            float curTranslationY = mLayout.getTranslationY();
+            float dy = getHeaderOffset() - curTranslationY;
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "scrollToClosed:offest:" + getHeaderOffset());
+                Log.d(TAG, "scrollToClosed: cur0:" + curTranslationY + ",end0:" + dy);
+                Log.d(TAG, "scrollToClosed: cur:" + Math.round(curTranslationY) + ",end:" + Math.round(dy));
+                Log.d(TAG, "scrollToClosed: cur1:" + (int) (curTranslationY) + ",end:" + (int) dy);
+            }
+            mOverScroller.startScroll(0, Math.round(curTranslationY - 0.1f), 0, Math.round(dy + 0.1f), duration);
+            start();
+        }
+
+        public void scrollToOpen(int duration) {
+            float curTranslationY = mLayout.getTranslationY();
+            mOverScroller.startScroll(0, (int) curTranslationY, 0, (int) -curTranslationY, duration);
+            start();
+        }
+
+        private void start() {
+            if (mOverScroller.computeScrollOffset()) {
+                mFlingRunnable = new FlingRunnable(mParent, mLayout);
+                ViewCompat.postOnAnimation(mLayout, mFlingRunnable);
+            } else {
+                onFlingFinished(mParent, mLayout);
             }
         }
     }

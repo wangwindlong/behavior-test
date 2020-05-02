@@ -15,7 +15,11 @@ import net.wangyl.behavior.R;
 import net.wangyl.behavior.ui.fragment.PageTwoFragment;
 import net.wangyl.behavior.ui.fragment.SwipeFragment;
 
+/**
+ * 博客地址：  https://www.jianshu.com/p/328ab7c84ca0
+ */
 public class TestTouch2Activity extends AppCompatActivity {
+
     private static final String TAG = "TestTouch2Activity";
 
     @Override

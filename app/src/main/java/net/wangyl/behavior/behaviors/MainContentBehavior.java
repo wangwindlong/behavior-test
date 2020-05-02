@@ -39,12 +39,13 @@ public class MainContentBehavior extends HeaderScrollingViewBehavior {
         float y = dependency.getHeight() - contentScrollY;
         Log.d(TAG, "onDependentViewChanged y=" + y + ",dependency=" + dependency + ",child=" + child);
         child.setY(y);
-        return true;
+//        offsetChildAsNeeded(parent, child, dependency);
+        return false;
     }
 
     private void offsetChildAsNeeded(CoordinatorLayout parent, View child, View dependency) {
-        child.setTranslationY((-dependency.getTranslationY() / getHeaderOffset() * getScrollRange(dependency)));
-
+//        child.setTranslationY((-dependency.getTranslationY() / getHeaderOffset() * getScrollRange(dependency)));
+        child.setTranslationY((int) (-dependency.getTranslationY() / (getHeaderOffset() * 1.0f) * getScrollRange(dependency)));
     }
 
 

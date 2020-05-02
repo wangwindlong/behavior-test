@@ -35,7 +35,7 @@ public class MainTitleBehavior extends CoordinatorLayout.Behavior<View> {
     public boolean onDependentViewChanged(@NotNull CoordinatorLayout parent, View child, View dependency) {
         float y = -(1 - dependency.getTranslationY() / getHeaderOffset()) * getTitleHeight();
         child.setY(y);
-        return true;
+        return false;
     }
 
     private int getHeaderOffset() {

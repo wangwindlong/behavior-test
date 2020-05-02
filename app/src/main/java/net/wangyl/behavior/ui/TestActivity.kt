@@ -59,7 +59,7 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
         mHeaderBehavior = (mHeader?.layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as MainHeaderBehavior?
         mHeader?.postDelayed({
             mHeaderBehavior?.closeHeader()
-        },1000)
+        },100)
         if (mHeaderBehavior != null) {
 //            mHeaderBehavior.setTabSuspension(true);
             mHeaderBehavior?.setHeaderStateListener(this)
@@ -176,7 +176,7 @@ class TestActivity : AppCompatActivity(), OnHeaderStateListener {
     }
 
     override fun onBackPressed() {
-        if (mHeaderBehavior != null && mHeaderBehavior?.isClosed != false) {
+        if (mHeaderBehavior != null && mHeaderBehavior?.isClosed == false) {
             mHeaderBehavior?.closeHeader()
         } else {
             super.onBackPressed()

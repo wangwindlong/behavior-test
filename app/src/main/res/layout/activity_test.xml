@@ -60,6 +60,7 @@
         android:layout_height="@dimen/title_height"
         android:background="@color/colorPrimary"
         android:orientation="horizontal"
+        android:paddingTop="25dp"
         app:layout_behavior="@string/behavior_main_title">
 
         <ImageView
